@@ -175,24 +175,6 @@ public class EncryptionServiceTest {
         EncryptionService.resetEncryptionKey(getTargetContext());
     }
 
-    @Test
-    public void getInstanceAsync() {
-        GetInstanceAsyncCallback callbackMock = mock(GetInstanceAsyncCallback.class);
-
-        EncryptionService.getInstanceAsync(getTargetContext(), callbackMock);
-
-        verify(callbackMock, timeout(60 * 1000)).onSuccess(notNull());
-    }
-
-    @Test
-    public void resetEncryptionKeyAsync() {
-        ResetEncryptionKeyAsyncCallback callbackMock = mock(ResetEncryptionKeyAsyncCallback.class);
-
-        EncryptionService.resetEncryptionKeyAsync(getTargetContext(), callbackMock);
-
-        verify(callbackMock, timeout(60 * 1000)).onSuccess();
-    }
-
     @After
     public void tearDown() {
         EncryptionService.resetEncryptionKey(getTargetContext());
