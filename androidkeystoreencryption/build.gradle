@@ -32,7 +32,7 @@ ext {
     siteUrl = 'https://github.com/awasisto/androidkeystoreencryption'
     gitUrl = 'https://github.com/awasisto/androidkeystoreencryption.git'
 
-    libraryVersion = '1.0.0'
+    libraryVersion = '1.1.0'
 
     developerId = 'awasisto'
     developerName = 'Andika Wasisto'
