@@ -26,8 +26,10 @@ Usage
 
 **Encryption**
 
-    String dataToEncrypt = "secret data";
+```java
+String dataToEncrypt = "secret data";
 
+try {
     EncryptionService encryptionService = EncryptionService.getInstance(context);
 
     EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(dataToEncrypt);
@@ -36,18 +38,115 @@ Usage
     // as strings.
     byte[] encryptedData = encryptedDataAndIv.getEncryptedData();
     byte[] iv = encryptedDataAndIv.getIv();
+} catch (EncryptionKeyLostException e) {
+    // you might want to reset the encryption key (you will not be able to decrypt the previously
+    // encrypted data!)
+    EncryptionService.resetEncryptionKey(context);
+
+    // And then do something useful. Maybe retry encrypting.
+}
+```
 
 **Decryption**
 
-    EncryptedDataAndIv encryptedDataAndIv = new EncryptedDataAndIv();
+```java
+EncryptedDataAndIv encryptedDataAndIv = new EncryptedDataAndIv();
 
-    // Use the previously saved encrypted data and IV
-    encryptedDataAndIv.setEncryptedData(encryptedData);
-    encryptedDataAndIv.setIv(iv);
+// Use the previously saved encrypted data and IV
+encryptedDataAndIv.setEncryptedData(encryptedData);
+encryptedDataAndIv.setIv(iv);
 
+try {
     EncryptionService encryptionService = EncryptionService.getInstance(context);
 
     encryptionService.decryptString(encryptedDataAndIv);
+} catch (EncryptionKeyLostException e) {
+    // you might want to reset the encryption key (you will not be able to decrypt the previously
+    // encrypted data!)
+    EncryptionService.resetEncryptionKey(context);
+
+    // and then do something useful
+}
+```
+
+**Encryption (asynchronous)**
+
+```java
+String dataToEncrypt = "secret data";
+
+EncryptionService.getInstanceAsync(context, new GetInstanceAsyncCallback() {
+    @Override
+    public void onSuccess(EncryptionService instance) {
+        EncryptedDataAndIv encryptedDataAndIv = instance.encrypt(dataToEncrypt);
+
+        // Save these values somewhere. You can encode them to Base64 if you need to save them
+        // as strings.
+        byte[] encryptedData = encryptedDataAndIv.getEncryptedData();
+        byte[] iv = encryptedDataAndIv.getIv();
+    }
+
+    @Override
+    public void onEncryptionKeyLost(EncryptionKeyLostException e) {
+        // you might want to reset the encryption key (you will not be able to decrypt the
+        // previously encrypted data!)
+        EncryptionService.resetEncryptionKeyAsync(context, new ResetEncryptionKeyAsyncCallback() {
+            @Override
+            public void onSuccess() {
+                // And then do something useful. Maybe retry encrypting.
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                // do something useful
+            }
+        });
+    }
+
+    @Override
+    public void onError(Throwable error) {
+        // do something useful
+    }
+});
+```
+
+**Decryption (asynchronous)**
+
+```java
+EncryptedDataAndIv encryptedDataAndIv = new EncryptedDataAndIv();
+
+// Use the previously saved encrypted data and IV
+encryptedDataAndIv.setEncryptedData(encryptedData);
+encryptedDataAndIv.setIv(iv);
+
+EncryptionService.getInstanceAsync(context, new GetInstanceAsyncCallback() {
+    @Override
+    public void onSuccess(EncryptionService instance) {
+        instance.decryptString(encryptedDataAndIv);
+    }
+
+    @Override
+    public void onEncryptionKeyLost(EncryptionKeyLostException e) {
+        // you might want to reset the encryption key (you will not be able to decrypt the
+        // previously encrypted data!)
+        EncryptionService.resetEncryptionKeyAsync(context, new ResetEncryptionKeyAsyncCallback() {
+            @Override
+            public void onSuccess() {
+                // and then do something useful
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                // do something useful
+            }
+        });
+    }
+
+    @Override
+    public void onError(Throwable error) {
+        // do something useful
+    }
+});
+```
 
 API <21 Issue
 -------------
@@ -62,7 +161,9 @@ recoverable data such as password, API token, etc.
 Download
 --------
 
-    compile 'com.wasisto.androidkeystoreencryption:androidkeystoreencryption:1.0.0'
+Download via Gradle:
+
+    compile 'com.wasisto.androidkeystoreencryption:androidkeystoreencryption:1.1.0'
 
 License
 -------
