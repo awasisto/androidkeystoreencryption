@@ -174,9 +174,4 @@ public class EncryptionServiceTest {
     public void resetEncryptionKey() {
         EncryptionService.resetEncryptionKey(getTargetContext());
     }
-
-    @After
-    public void tearDown() {
-        EncryptionService.resetEncryptionKey(getTargetContext());
-    }
 }
