@@ -18,8 +18,11 @@ package com.wasisto.androidkeystoreencryption;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.wasisto.androidkeystoreencryption.EncryptionService.GetInstanceAsyncCallback;
+import com.wasisto.androidkeystoreencryption.EncryptionService.ResetEncryptionKeyAsyncCallback;
 import com.wasisto.androidkeystoreencryption.model.EncryptedDataAndIv;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,6 +31,11 @@ import java.math.BigInteger;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class EncryptionServiceTest {
@@ -164,6 +172,29 @@ public class EncryptionServiceTest {
 
     @Test
     public void resetEncryptionKey() {
+        EncryptionService.resetEncryptionKey(getTargetContext());
+    }
+
+    @Test
+    public void getInstanceAsync() {
+        GetInstanceAsyncCallback callbackMock = mock(GetInstanceAsyncCallback.class);
+
+        EncryptionService.getInstanceAsync(getTargetContext(), callbackMock);
+
+        verify(callbackMock, timeout(60 * 1000)).onSuccess(notNull());
+    }
+
+    @Test
+    public void resetEncryptionKeyAsync() {
+        ResetEncryptionKeyAsyncCallback callbackMock = mock(ResetEncryptionKeyAsyncCallback.class);
+
+        EncryptionService.resetEncryptionKeyAsync(getTargetContext(), callbackMock);
+
+        verify(callbackMock, timeout(60 * 1000)).onSuccess();
+    }
+
+    @After
+    public void tearDown() {
         EncryptionService.resetEncryptionKey(getTargetContext());
     }
 }

@@ -18,6 +18,7 @@ package com.wasisto.androidkeystoreencryption;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyGenParameterSpec;
@@ -221,6 +222,42 @@ public class EncryptionService {
     }
 
     /**
+     * Asynchronously returns {@code EncryptionService} instance for the current application.
+     *
+     * @param context The {@code Context}.
+     * @param callback The callback.
+     */
+    public static void getInstanceAsync(Context context, GetInstanceAsyncCallback callback) {
+        new AsyncTask<Void, Void, Void>() {
+            EncryptionService encryptionServiceInstance;
+            Throwable error;
+
+            @Override
+            protected Void doInBackground(Void... v) {
+                try {
+                    encryptionServiceInstance = getInstance(context);
+                } catch (Throwable error) {
+                    this.error = error;
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void v) {
+                if (error != null) {
+                    if (error instanceof EncryptionKeyLostException) {
+                        callback.onEncryptionKeyLost((EncryptionKeyLostException) error);
+                    } else {
+                        callback.onError(error);
+                    }
+                } else {
+                    callback.onSuccess(encryptionServiceInstance);
+                }
+            }
+        }.execute();
+    }
+
+    /**
      * Resets the stored encryption key.
      *
      * @param context The {@code Context}.
@@ -244,6 +281,38 @@ public class EncryptionService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Asynchronously resets the stored encryption key.
+     *
+     * @param context The {@code Context}.
+     * @param callback The callback.
+     */
+    public static void resetEncryptionKeyAsync(Context context,
+                                               ResetEncryptionKeyAsyncCallback callback) {
+        new AsyncTask<Void, Void, Void>() {
+            private Throwable mError;
+
+            @Override
+            protected Void doInBackground(Void... v) {
+                try {
+                    resetEncryptionKey(context);
+                } catch (Throwable error) {
+                    mError = error;
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void v) {
+                if (mError != null) {
+                    callback.onError(mError);
+                } else {
+                    callback.onSuccess();
+                }
+            }
+        }.execute();
     }
 
     /**
@@ -486,5 +555,52 @@ public class EncryptionService {
      */
     public BigInteger decryptBigInteger(EncryptedDataAndIv encryptedDataAndIv) {
         return new BigInteger(decryptByteArray(encryptedDataAndIv));
+    }
+
+    /**
+     * The callback interface for the
+     * {@link #getInstanceAsync(Context, GetInstanceAsyncCallback)} method.
+     */
+    public interface GetInstanceAsyncCallback {
+
+        /**
+         * Called if the operation is successful.
+         *
+         * @param instance The {@code EncryptionService} instance.
+         */
+        void onSuccess(EncryptionService instance);
+
+        /**
+         * Called if the encryption key is lost.
+         *
+         * @param e The exception.
+         */
+        void onEncryptionKeyLost(EncryptionKeyLostException e);
+
+        /**
+         * Called if an error occurred.
+         *
+         * @param error The error.
+         */
+        void onError(Throwable error);
+    }
+
+    /**
+     * The callback interface for the
+     * {@link #resetEncryptionKeyAsync(Context, ResetEncryptionKeyAsyncCallback)} method.
+     */
+    public interface ResetEncryptionKeyAsyncCallback {
+
+        /**
+         * Called if the operation is successful.
+         */
+        void onSuccess();
+
+        /**
+         * Called if an error occurred.
+         *
+         * @param error The error.
+         */
+        void onError(Throwable error);
     }
 }
