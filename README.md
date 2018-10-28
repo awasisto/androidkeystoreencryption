@@ -69,7 +69,7 @@ try {
 }
 ```
 
-**Encryption (asynchronous)**
+**Encryption (asynchronous instance creation)**
 
 ```java
 String dataToEncrypt = "secret data";
@@ -109,7 +109,7 @@ EncryptionService.getInstanceAsync(context, new GetInstanceAsyncCallback() {
 });
 ```
 
-**Decryption (asynchronous)**
+**Decryption (asynchronous instance creation)**
 
 ```java
 EncryptedDataAndIv encryptedDataAndIv = new EncryptedDataAndIv();
