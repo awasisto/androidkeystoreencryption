@@ -163,7 +163,7 @@ Download
 
 Download via Gradle:
 
-    compile 'com.wasisto.androidkeystoreencryption:androidkeystoreencryption:1.1.0'
+    implementation 'com.wasisto.androidkeystoreencryption:androidkeystoreencryption:1.1.0'
 
 License
 -------
