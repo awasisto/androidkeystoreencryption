@@ -161,9 +161,4 @@ public class EncryptionServiceTest {
 
         assertEquals(originalData, decryptedData);
     }
-
-    @Test
-    public void resetEncryptionKey() {
-        EncryptionService.resetEncryptionKey(getTargetContext());
-    }
 }
