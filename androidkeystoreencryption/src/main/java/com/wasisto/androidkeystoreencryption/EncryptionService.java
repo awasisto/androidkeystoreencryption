@@ -237,7 +237,11 @@ public class EncryptionService {
                 EncryptionService instance = getInstance(context);
                 callback.onSuccess(instance);
             } catch (Throwable t) {
-                handler.post(() -> callback.onError(t));
+                if (t instanceof EncryptionKeyLostException) {
+                    callback.onEncryptionKeyLost((EncryptionKeyLostException) t);
+                } else {
+                    callback.onError(t);
+                }
             }
         });
     }
