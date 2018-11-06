@@ -18,8 +18,9 @@ package com.wasisto.androidkeystoreencryption;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
@@ -228,33 +229,17 @@ public class EncryptionService {
      * @param callback The callback.
      */
     public static void getInstanceAsync(Context context, GetInstanceAsyncCallback callback) {
-        new AsyncTask<Void, Void, Void>() {
-            EncryptionService encryptionServiceInstance;
-            Throwable error;
+        Handler handler = new Handler(Looper.myLooper() != null ? Looper.myLooper() :
+                Looper.getMainLooper());
 
-            @Override
-            protected Void doInBackground(Void... v) {
-                try {
-                    encryptionServiceInstance = getInstance(context);
-                } catch (Throwable error) {
-                    this.error = error;
-                }
-                return null;
+        new Thread(() -> {
+            try {
+                EncryptionService instance = getInstance(context);
+                callback.onSuccess(instance);
+            } catch (Throwable t) {
+                handler.post(() -> callback.onError(t));
             }
-
-            @Override
-            protected void onPostExecute(Void v) {
-                if (error != null) {
-                    if (error instanceof EncryptionKeyLostException) {
-                        callback.onEncryptionKeyLost((EncryptionKeyLostException) error);
-                    } else {
-                        callback.onError(error);
-                    }
-                } else {
-                    callback.onSuccess(encryptionServiceInstance);
-                }
-            }
-        }.execute();
+        });
     }
 
     /**
@@ -291,28 +276,17 @@ public class EncryptionService {
      */
     public static void resetEncryptionKeyAsync(Context context,
                                                ResetEncryptionKeyAsyncCallback callback) {
-        new AsyncTask<Void, Void, Void>() {
-            private Throwable mError;
+        Handler handler = new Handler(Looper.myLooper() != null ? Looper.myLooper() :
+                Looper.getMainLooper());
 
-            @Override
-            protected Void doInBackground(Void... v) {
-                try {
-                    resetEncryptionKey(context);
-                } catch (Throwable error) {
-                    mError = error;
-                }
-                return null;
+        new Thread(() -> {
+            try {
+                resetEncryptionKey(context);
+                handler.post(callback::onSuccess);
+            } catch (Throwable t) {
+                handler.post(() -> callback.onError(t));
             }
-
-            @Override
-            protected void onPostExecute(Void v) {
-                if (mError != null) {
-                    callback.onError(mError);
-                } else {
-                    callback.onSuccess();
-                }
-            }
-        }.execute();
+        });
     }
 
     /**
