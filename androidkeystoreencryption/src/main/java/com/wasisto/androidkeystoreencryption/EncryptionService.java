@@ -235,12 +235,13 @@ public class EncryptionService {
         new Thread(() -> {
             try {
                 EncryptionService instance = getInstance(context);
-                callback.onSuccess(instance);
+                handler.post(() -> callback.onSuccess(instance));
             } catch (Throwable t) {
                 if (t instanceof EncryptionKeyLostException) {
-                    callback.onEncryptionKeyLost((EncryptionKeyLostException) t);
+                    handler.post(() -> callback.onEncryptionKeyLost(
+                            (EncryptionKeyLostException) t));
                 } else {
-                    callback.onError(t);
+                    handler.post(() -> callback.onError(t));
                 }
             }
         });
