@@ -91,9 +91,9 @@ public class EncryptionService {
     private static final int RSA_KEY_SIZE = 4096;
     private static final int AES_KEY_SIZE = 256;
 
-    private static volatile EncryptionService sInstance;
+    private static volatile EncryptionService instance;
 
-    private SecretKey mAesSecretKey;
+    private SecretKey aesSecretKey;
 
     private void initialize(Context context) throws EncryptionKeyLostException {
         try {
@@ -121,7 +121,7 @@ public class EncryptionService {
 
                     byte[] aesSecretKey = cipher.doFinal(encryptedAesSecretKey);
 
-                    mAesSecretKey = new SecretKeySpec(aesSecretKey, AES);
+                    this.aesSecretKey = new SecretKeySpec(aesSecretKey, AES);
                 } catch (Throwable t) {
                     throw new EncryptionKeyLostException("The encryption key is lost. Reset " +
                             "using EncryptionService#resetEncryptionKey(Context) method.");
@@ -133,7 +133,7 @@ public class EncryptionService {
                                 (SecretKeyEntry) keystore.getEntry(AES_SECRET_KEY_ALIAS,
                                         null);
 
-                        mAesSecretKey = aesSecretKeyKeystoreEntry.getSecretKey();
+                        aesSecretKey = aesSecretKeyKeystoreEntry.getSecretKey();
                     } else {
                         KeyGenerator aesSecretKeyGenerator = KeyGenerator.getInstance(AES,
                                 ANDROID_KEYSTORE);
@@ -154,7 +154,7 @@ public class EncryptionService {
 
                         aesSecretKeyGenerator.init(keyGenParameterSpec);
 
-                        mAesSecretKey = aesSecretKeyGenerator.generateKey();
+                        aesSecretKey = aesSecretKeyGenerator.generateKey();
                     }
                 } else {
                     KeyPairGeneratorSpec.Builder keyPairGeneratorSpecBuilder =
@@ -182,9 +182,9 @@ public class EncryptionService {
                     KeyGenerator aesSecretKeyGenerator = KeyGenerator.getInstance(AES);
                     aesSecretKeyGenerator.init(AES_KEY_SIZE);
 
-                    mAesSecretKey = aesSecretKeyGenerator.generateKey();
+                    aesSecretKey = aesSecretKeyGenerator.generateKey();
 
-                    byte[] encryptedAesSecretKey = cipher.doFinal(mAesSecretKey.getEncoded());
+                    byte[] encryptedAesSecretKey = cipher.doFinal(aesSecretKey.getEncoded());
 
                     sharedPreferences.edit().putString(PREFERENCE_ENCRYPTED_AES_SECRET_KEY,
                             Base64.encodeToString(encryptedAesSecretKey, DEFAULT)).apply();
@@ -211,15 +211,15 @@ public class EncryptionService {
      * @throws EncryptionKeyLostException if the encryption key is lost.
      */
     public static EncryptionService getInstance(Context context) throws EncryptionKeyLostException {
-        if (sInstance == null) {
+        if (instance == null) {
             synchronized (EncryptionService.class) {
-                if (sInstance == null) {
-                    sInstance = new EncryptionService(context.getApplicationContext());
+                if (instance == null) {
+                    instance = new EncryptionService(context.getApplicationContext());
                 }
             }
         }
 
-        return sInstance;
+        return instance;
     }
 
     /**
@@ -260,8 +260,8 @@ public class EncryptionService {
 
             sharedPreferences.edit().clear().apply();
 
-            if (sInstance != null) {
-                sInstance.initialize(context.getApplicationContext());
+            if (instance != null) {
+                instance.initialize(context.getApplicationContext());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -298,7 +298,7 @@ public class EncryptionService {
     public EncryptedDataAndIv encrypt(byte[] byteArray) {
         try {
             Cipher cipher = Cipher.getInstance(AES_CBC_PKCS7PADDING);
-            cipher.init(ENCRYPT_MODE, mAesSecretKey);
+            cipher.init(ENCRYPT_MODE, aesSecretKey);
 
             byte[] encryptedData = cipher.doFinal(byteArray);
             byte[] iv = cipher.getIV();
@@ -414,7 +414,7 @@ public class EncryptionService {
     public byte[] decryptByteArray(EncryptedDataAndIv encryptedDataAndIv) {
         try {
             Cipher cipher = Cipher.getInstance(AES_CBC_PKCS7PADDING);
-            cipher.init(DECRYPT_MODE, mAesSecretKey,
+            cipher.init(DECRYPT_MODE, aesSecretKey,
                     new IvParameterSpec(encryptedDataAndIv.getIv()));
 
             return cipher.doFinal(encryptedDataAndIv.getEncryptedData());
