@@ -16,28 +16,36 @@
 
 package com.wasisto.androidkeystoreencryption;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.wasisto.androidkeystoreencryption.exception.EncryptionKeyLostException;
 import com.wasisto.androidkeystoreencryption.model.EncryptedDataAndIv;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.math.BigInteger;
 
-import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class EncryptionServiceTest {
 
+    private EncryptionService encryptionService;
+    
+    @Before
+    public void setUp() throws EncryptionKeyLostException {
+        encryptionService = EncryptionService.getInstance(InstrumentationRegistry
+                .getTargetContext());
+    }
+
     @Test
-    public void byteArrayEncryptDecrypt() throws Exception {
+    public void byteArrayEncryptDecrypt() {
         byte[] originalData = new byte[]{4, 8, 15, 16, 23, 42};
 
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
-        
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
         byte[] decryptedData = encryptionService.decryptByteArray(encryptedDataAndIv);
@@ -46,10 +54,8 @@ public class EncryptionServiceTest {
     }
 
     @Test
-    public void byteEncryptDecrypt() throws Exception {
+    public void byteEncryptDecrypt() {
         byte originalData = 25;
-
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
 
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
@@ -59,10 +65,8 @@ public class EncryptionServiceTest {
     }
 
     @Test
-    public void shortEncryptDecrypt() throws Exception {
+    public void shortEncryptDecrypt() {
         short originalData = -31421;
-
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
 
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
@@ -72,10 +76,8 @@ public class EncryptionServiceTest {
     }
 
     @Test
-    public void intEncryptDecrypt() throws Exception {
+    public void intEncryptDecrypt() {
         int originalData = -110883086;
-
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
 
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
@@ -85,10 +87,8 @@ public class EncryptionServiceTest {
     }
 
     @Test
-    public void longEncryptDecrypt() throws Exception {
+    public void longEncryptDecrypt() {
         long originalData = 836613320883456075L;
-
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
 
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
@@ -98,10 +98,8 @@ public class EncryptionServiceTest {
     }
 
     @Test
-    public void floatEncryptDecrypt() throws Exception {
+    public void floatEncryptDecrypt() {
         float originalData = 3.14159265358979323846f;
-
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
 
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
@@ -111,10 +109,8 @@ public class EncryptionServiceTest {
     }
 
     @Test
-    public void doubleEncryptDecrypt() throws Exception {
+    public void doubleEncryptDecrypt() {
         double originalData = 3.14159265358979323846;
-
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
 
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
@@ -124,10 +120,8 @@ public class EncryptionServiceTest {
     }
 
     @Test
-    public void charEncryptDecrypt() throws Exception {
+    public void charEncryptDecrypt() {
         char originalData = 44765;
-
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
 
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
@@ -137,10 +131,8 @@ public class EncryptionServiceTest {
     }
 
     @Test
-    public void stringEncryptDecrypt() throws Exception {
+    public void stringEncryptDecrypt() {
         String originalData = "foo";
-
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
 
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
@@ -150,10 +142,8 @@ public class EncryptionServiceTest {
     }
 
     @Test
-    public void bigIntegerEncryptDecrypt() throws Exception {
+    public void bigIntegerEncryptDecrypt() {
         BigInteger originalData = new BigInteger("79206892171740488283");
-
-        EncryptionService encryptionService = EncryptionService.getInstance(getTargetContext());
 
         EncryptedDataAndIv encryptedDataAndIv = encryptionService.encrypt(originalData);
 
