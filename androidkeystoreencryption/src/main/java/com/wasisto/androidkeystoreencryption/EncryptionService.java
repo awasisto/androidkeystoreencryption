@@ -139,7 +139,7 @@ public class EncryptionService {
                                 ANDROID_KEYSTORE);
 
                         KeyGenParameterSpec keyGenParameterSpec =
-                                new KeyGenParameterSpec.Builder(RSA_KEYPAIR_ALIAS,
+                                new KeyGenParameterSpec.Builder(AES_SECRET_KEY_ALIAS,
                                         KeyProperties.PURPOSE_ENCRYPT
                                                 | KeyProperties.PURPOSE_DECRYPT)
                                         .setCertificateSubject(CERTIFICATE_SUBJECT)
