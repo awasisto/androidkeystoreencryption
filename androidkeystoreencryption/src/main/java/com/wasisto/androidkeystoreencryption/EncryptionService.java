@@ -157,6 +157,9 @@ public class EncryptionService {
                         aesSecretKey = aesSecretKeyGenerator.generateKey();
                     }
                 } else {
+                    KeyPairGenerator rsaKeyPairGenerator = KeyPairGenerator.getInstance(RSA,
+                            ANDROID_KEYSTORE);
+
                     KeyPairGeneratorSpec.Builder keyPairGeneratorSpecBuilder =
                             new KeyPairGeneratorSpec.Builder(context)
                                     .setAlias(RSA_KEYPAIR_ALIAS)
@@ -168,9 +171,6 @@ public class EncryptionService {
                     if (Build.VERSION.SDK_INT >= KITKAT) {
                         keyPairGeneratorSpecBuilder.setKeySize(RSA_KEY_SIZE);
                     }
-
-                    KeyPairGenerator rsaKeyPairGenerator = KeyPairGenerator.getInstance(RSA,
-                            ANDROID_KEYSTORE);
 
                     rsaKeyPairGenerator.initialize(keyPairGeneratorSpecBuilder.build());
 
