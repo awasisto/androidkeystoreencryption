@@ -89,7 +89,7 @@ public class EncryptionService {
     private static final Date CERTIFICATE_NOT_BEFORE = new Date(0L);
     private static final Date CERTIFICATE_NOT_AFTER = new Date(Long.MAX_VALUE);
 
-    private static final int RSA_KEY_SIZE = 4096;
+    private static final int RSA_KEY_SIZE = 2048;
     private static final int AES_KEY_SIZE = 256;
 
     private static volatile EncryptionService instance;
