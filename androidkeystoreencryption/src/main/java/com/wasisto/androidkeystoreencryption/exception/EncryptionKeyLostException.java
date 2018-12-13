@@ -19,7 +19,7 @@ package com.wasisto.androidkeystoreencryption.exception;
 /**
  * An exception that will be thrown when the encryption key is lost.
  */
-public class EncryptionKeyLostException extends Exception {
+public class EncryptionKeyLostException extends RuntimeException {
 
     /**
      * Constructs a new {@code EncryptionKeyLostException} with the specified detail message.

@@ -32,7 +32,8 @@ ext {
     siteUrl = 'https://github.com/awasisto/androidkeystoreencryption'
     gitUrl = 'https://github.com/awasisto/androidkeystoreencryption.git'
 
-    libraryVersion = '1.1.4'
+    libraryVersionCode = 7
+    libraryVersionName = '1.1.5'
 
     developerId = 'awasisto'
     developerName = 'Andika Wasisto'
@@ -50,8 +51,8 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 6
-        versionName libraryVersion
+        versionCode libraryVersionCode
+        versionName libraryVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -70,7 +71,7 @@ dependencies {
 }
 
 group = publishedGroupId
-version = libraryVersion
+version = libraryVersionName
 
 install {
     repositories.mavenInstaller {
