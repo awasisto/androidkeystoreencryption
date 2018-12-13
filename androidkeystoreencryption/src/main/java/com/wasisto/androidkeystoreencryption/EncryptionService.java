@@ -29,6 +29,7 @@ import android.util.Base64;
 import com.wasisto.androidkeystoreencryption.exception.EncryptionKeyLostException;
 import com.wasisto.androidkeystoreencryption.model.EncryptedDataAndIv;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
@@ -95,7 +96,7 @@ public class EncryptionService {
 
     private SecretKey aesSecretKey;
 
-    private void initialize(Context context) throws EncryptionKeyLostException {
+    private void initialize(Context context) {
         try {
             KeyStore keystore = KeyStore.getInstance(ANDROID_KEYSTORE);
             keystore.load(null);
@@ -190,16 +191,12 @@ public class EncryptionService {
                             Base64.encodeToString(encryptedAesSecretKey, DEFAULT)).apply();
                 }
             }
-        } catch (Exception e) {
-            if (e instanceof EncryptionKeyLostException) {
-                throw (EncryptionKeyLostException) e;
-            } else {
-                throw new RuntimeException(e);
-            }
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private EncryptionService(Context context) throws EncryptionKeyLostException {
+    private EncryptionService(Context context) {
         initialize(context);
     }
 
@@ -208,9 +205,8 @@ public class EncryptionService {
      *
      * @param context The {@code Context}.
      * @return The {@code EncryptionService} instance for the current application.
-     * @throws EncryptionKeyLostException if the encryption key is lost.
      */
-    public static EncryptionService getInstance(Context context) throws EncryptionKeyLostException {
+    public static EncryptionService getInstance(Context context) {
         if (instance == null) {
             synchronized (EncryptionService.class) {
                 if (instance == null) {
