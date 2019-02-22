@@ -26,6 +26,24 @@ public class EncryptedDataAndIv {
     private byte[] mIv;
 
     /**
+     * Constructs a new {@code EncryptedDataAndIv}.
+     */
+    public EncryptedDataAndIv() {
+    }
+
+    /**
+     * Constructs a new {@code EncryptedDataAndIv} with the specified encrypted data and
+     * initialization vector.
+     *
+     * @param encryptedData The encrypted data.
+     * @param iv The initialization vector.
+     */
+    public EncryptedDataAndIv(byte[] encryptedData, byte[] iv) {
+        mEncryptedData = encryptedData;
+        mIv = iv;
+    }
+
+    /**
      * Returns the encrypted data.
      *
      * @return The encrypted data.
