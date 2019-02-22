@@ -224,20 +224,32 @@ public class EncryptionService {
      * @param context The {@code Context}.
      * @param callback The callback.
      */
-    public static void getInstanceAsync(Context context, GetInstanceAsyncCallback callback) {
-        Handler handler = new Handler(Looper.myLooper() != null ? Looper.myLooper() :
+    public static void getInstanceAsync(final Context context, final GetInstanceAsyncCallback callback) {
+        final Handler handler = new Handler(Looper.myLooper() != null ? Looper.myLooper() :
                 Looper.getMainLooper());
 
-        new Thread(() -> {
-            try {
-                EncryptionService instance = getInstance(context);
-                handler.post(() -> callback.onSuccess(instance));
-            } catch (Throwable t) {
-                if (t instanceof EncryptionKeyLostException) {
-                    handler.post(() -> callback.onEncryptionKeyLost(
-                            (EncryptionKeyLostException) t));
-                } else {
-                    handler.post(() -> callback.onError(t));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final EncryptionService instance = getInstance(context);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onSuccess(instance);
+                        }
+                    });
+                } catch (final Throwable t) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (t instanceof EncryptionKeyLostException) {
+                                callback.onEncryptionKeyLost((EncryptionKeyLostException) t);
+                            } else {
+                                callback.onError(t);
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -275,17 +287,30 @@ public class EncryptionService {
      * @param context The {@code Context}.
      * @param callback The callback.
      */
-    public static void resetEncryptionKeyAsync(Context context,
-                                               ResetEncryptionKeyAsyncCallback callback) {
-        Handler handler = new Handler(Looper.myLooper() != null ? Looper.myLooper() :
+    public static void resetEncryptionKeyAsync(final Context context,
+                                               final ResetEncryptionKeyAsyncCallback callback) {
+        final Handler handler = new Handler(Looper.myLooper() != null ? Looper.myLooper() :
                 Looper.getMainLooper());
 
-        new Thread(() -> {
-            try {
-                resetEncryptionKey(context);
-                handler.post(callback::onSuccess);
-            } catch (Throwable t) {
-                handler.post(() -> callback.onError(t));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    resetEncryptionKey(context);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onSuccess();
+                        }
+                    });
+                } catch (final Throwable t) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onError(t);
+                        }
+                    });
+                }
             }
         });
     }
