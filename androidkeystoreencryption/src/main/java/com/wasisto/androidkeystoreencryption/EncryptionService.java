@@ -329,11 +329,7 @@ public class EncryptionService {
             byte[] encryptedData = cipher.doFinal(byteArray);
             byte[] iv = cipher.getIV();
 
-            EncryptedDataAndIv encryptedDataAndIv = new EncryptedDataAndIv();
-            encryptedDataAndIv.setEncryptedData(encryptedData);
-            encryptedDataAndIv.setIv(iv);
-
-            return encryptedDataAndIv;
+            return new EncryptedDataAndIv(encryptedData, iv);
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
