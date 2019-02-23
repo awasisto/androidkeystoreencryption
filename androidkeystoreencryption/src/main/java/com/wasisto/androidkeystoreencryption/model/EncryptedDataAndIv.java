@@ -21,9 +21,27 @@ package com.wasisto.androidkeystoreencryption.model;
  */
 public class EncryptedDataAndIv {
 
-    private byte[] mEncryptedData;
+    private byte[] encryptedData;
 
-    private byte[] mIv;
+    private byte[] iv;
+
+    /**
+     * Constructs a new {@code EncryptedDataAndIv}.
+     */
+    public EncryptedDataAndIv() {
+    }
+
+    /**
+     * Constructs a new {@code EncryptedDataAndIv} with the specified encrypted data and
+     * initialization vector.
+     *
+     * @param encryptedData The encrypted data.
+     * @param iv The initialization vector.
+     */
+    public EncryptedDataAndIv(byte[] encryptedData, byte[] iv) {
+        this.encryptedData = encryptedData;
+        this.iv = iv;
+    }
 
     /**
      * Returns the encrypted data.
@@ -31,7 +49,7 @@ public class EncryptedDataAndIv {
      * @return The encrypted data.
      */
     public byte[] getEncryptedData() {
-        return mEncryptedData;
+        return encryptedData;
     }
 
     /**
@@ -40,7 +58,7 @@ public class EncryptedDataAndIv {
      * @param encryptedData The encrypted data.
      */
     public void setEncryptedData(byte[] encryptedData) {
-        mEncryptedData = encryptedData;
+        this.encryptedData = encryptedData;
     }
 
     /**
@@ -49,7 +67,7 @@ public class EncryptedDataAndIv {
      * @return The initialization vector.
      */
     public byte[] getIv() {
-        return mIv;
+        return iv;
     }
 
     /**
@@ -58,6 +76,6 @@ public class EncryptedDataAndIv {
      * @param iv The initialization vector.
      */
     public void setIv(byte[] iv) {
-        mIv = iv;
+        this.iv = iv;
     }
 }
